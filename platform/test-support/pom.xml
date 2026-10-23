@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Inherits versions, BOMs and plugins from the parent. -->
+  <parent>
+    <groupId>dev.sampay</groupId>
+    <artifactId>sampay</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <!--
+    Test support: ready-made containers and fixture builders (written from Phase 1 on).
+    Consumers declare this module with scope test, so nothing here leaks into a production jar.
+  -->
+  <artifactId>test-support</artifactId>
+  <packaging>jar</packaging>
+
+  <!--
+    Compile scope in here: this module's classes use these APIs in src/main, and consumers
+    get them transitively in their test scope. Versions come from the parent's BOMs.
+    Testcontainers 2.x added the "testcontainers-" prefix to its module names.
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+  </dependencies>
+</project>

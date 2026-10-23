@@ -1,0 +1,42 @@
+# Everyday local infrastructure (core profile). Each phase adds its services to this file.
+#
+# Ports reserved by the project (do not use them for anything else):
+#   8080 gateway          8081 ledger-service      8082 statement-service
+#   8083 payment-service  8084 antifraud-service   8085 notification-service
+#   8088 Kafka UI         8090 spi-simulator
+#   5432 PostgreSQL
+#
+# Usage: docker compose -f infra/compose/core.yml up -d
+
+# Fixed project name: containers, network and volumes get the "sampay" prefix no matter which folder you run from.
+name: sampay
+
+services:
+  # One instance for all services, with one database per service (each one only sees its own).
+  postgres:
+    image: postgres:18.6
+    container_name: sampay-postgres
+    # Development superuser. POSTGRES_DB is this user's default database, not a service database.
+    environment:
+      POSTGRES_USER: sampay
+      POSTGRES_PASSWORD: sampay
+      POSTGRES_DB: sampay
+    ports:
+      - "5432:5432"
+    volumes:
+      # Since image 18, PGDATA lives in a versioned subdirectory of /var/lib/postgresql,
+      # so the volume is mounted here and not at /var/lib/postgresql/data as in older versions.
+      - postgres-data:/var/lib/postgresql
+      # Scripts run only on the first start, when the volume is empty. Creates the service databases.
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    # "healthy" only once the server accepts connections; future services use depends_on with condition: service_healthy.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sampay -d sampay"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+# Named volume: data survives "docker compose down" (only "down -v" deletes it).
+volumes:
+  postgres-data:

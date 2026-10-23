@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: ledger-service
+
+  # Development credentials, the same as in infra/compose/core.yml.
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ledger_db
+    username: sampay
+    password: sampay
+
+  # Each request runs on a virtual thread (Tomcat, @Async, schedulers).
+  threads:
+    virtual:
+      enabled: true
+
+  jpa:
+    # Flyway owns the schema; Hibernate only checks that the entities match it.
+    hibernate:
+      ddl-auto: validate
+    # No session kept open up to the view: lazy access outside a transaction fails instead of running a hidden query.
+    open-in-view: false
+
+server:
+  port: 8081
+
+# Only health and info are exposed over HTTP; the rest of Actuator stays closed.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

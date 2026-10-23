@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- The parent is the service aggregator. -->
+  <parent>
+    <groupId>dev.sampay</groupId>
+    <artifactId>ledger-service</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <!-- Assembles the application: main class, use case wiring and application.yml. Builds the executable jar. -->
+  <artifactId>ledger-bootstrap</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- Adapters bring application and domain in transitively. -->
+    <dependency>
+      <groupId>dev.sampay</groupId>
+      <artifactId>ledger-adapters</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Operational endpoints (/actuator/health, /actuator/info). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!--
+    The only module with spring-boot-maven-plugin: it is the only one that becomes an executable jar.
+    Version and the repackage goal come from the root pluginManagement.
+  -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

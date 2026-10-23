@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- The parent is the service aggregator. -->
+  <parent>
+    <groupId>dev.sampay</groupId>
+    <artifactId>ledger-service</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <!-- Where the frameworks come in: REST on the inbound side, JPA and Flyway on the outbound side. -->
+  <artifactId>ledger-adapters</artifactId>
+  <packaging>jar</packaging>
+
+  <!-- springdoc version: not managed by the Boot BOM. The 3.x line is the one compatible with Boot 4. -->
+  <properties>
+    <springdoc.version>3.1.1</springdoc.version>
+  </properties>
+
+  <dependencies>
+    <!-- Inner layers: adapters implement the application ports and map to the domain. -->
+    <dependency>
+      <groupId>dev.sampay</groupId>
+      <artifactId>ledger-application</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.sampay</groupId>
+      <artifactId>ledger-domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- HTTP inbound. In Boot 4 the MVC starter is called webmvc (in Boot 3 it was spring-boot-starter-web). -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+    <!-- Bean Validation (@Valid, @NotNull) on request DTOs. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    <!-- OpenAPI and Swagger UI generated from the controllers. -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
+
+    <!-- PostgreSQL outbound: JPA/Hibernate, the JDBC driver and the migrations. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <!-- Boot 4 gave Flyway its own starter; without it the auto-configuration does not run. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
+    </dependency>
+    <!-- Since Flyway 10, support for each database is a separate module. -->
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-database-postgresql</artifactId>
+    </dependency>
+    <!-- Driver at runtime only: the code talks to JDBC/JPA, never to driver classes. -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Adapter integration tests: Spring context plus real containers from test-support. -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.sampay</groupId>
+      <artifactId>test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
